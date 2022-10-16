@@ -1,21 +1,13 @@
 import { useState, useEffect } from "react";
-import { Game, move, status, moves, aiMove, getFen } from "js-chess-engine";
+import { Game } from "js-chess-engine";
+
+const game = new Game();
 
 function App() {
   const [boardArray2, setBoardArray2] = useState({});
-  const game = new Game();
+  const [moveNum, setMoveNum] = useState(0);
   let keys = Object.keys(boardArray2);
-  console.log(game.exportJson());
   let board = game.exportJson().pieces;
-
-  useEffect(() => {
-    // console.log(board);
-
-    // let boardArray = {};
-    // console.log(board);
-
-    setCurrBoard();
-  }, []);
 
   function setCurrBoard() {
     let boardArray = {};
@@ -53,24 +45,37 @@ function App() {
     }
     setBoardArray2({ ...boardArray });
     keys = Object.keys(boardArray2);
-
-    console.log();
+    console.log(board);
   }
+
+  useEffect(() => {
+    console.log("UseEffect " + moveNum);
+
+    setCurrBoard();
+  }, []);
+
+  // useEffect(() => {
+  //   console.log(boardArray2);
+  // }, [boardArray2]);
 
   const [possibleMoves, setPossibleMoves] = useState([]);
   const [fromPosition, setfromPosition] = useState("");
 
   const tempFn = (x, y) => {
     if (possibleMoves.length > 0) {
+      console.log(fromPosition + " " + x);
       game.move(fromPosition, x);
-
+      console.log(game.exportJson().pieces);
       setCurrBoard();
-      console.log("Dine");
+      // setMoveNum(moveNum + 1);
+      console.log("Done");
       setfromPosition("");
-      setPossibleMoves([]);
+      game.aiMove();
+      setCurrBoard();
+      setPossibleMoves([...[]]);
     } else {
       console.log(x + " " + y);
-      setPossibleMoves(game.moves(x));
+      setPossibleMoves([...game.moves(x)]);
       setfromPosition(x);
       console.log(possibleMoves);
     }
@@ -96,5 +101,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
